@@ -27,7 +27,7 @@ function App() {
     }
 
     return {
-      items: [],
+      items: [{ name: "", splitters: new Set() }],
       splitters: new Set([]),
       total: undefined,
     };
