@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import produce, { enableMapSet } from "immer";
 import { calculate } from "./calculate";
+import { fromString, toString } from "./serializer";
 enableMapSet();
 
 export type Item = {
@@ -9,7 +10,7 @@ export type Item = {
   splitters: Set<string>;
 };
 
-type State = {
+export type State = {
   items: Array<Item>;
   splitters: Set<string>;
   total?: number;
@@ -21,20 +22,7 @@ function App() {
 
     if (searchParams.has("q")) {
       try {
-        const params = JSON.parse(atob(searchParams.get("q")!));
-
-        return {
-          items: params.items.map((item: any) => {
-            return {
-              ...item,
-              splitters: new Set(
-                Object.entries(item.splitters).map(([key, _]) => key)
-              ),
-            };
-          }),
-          splitters: new Set(params.splitters),
-          total: params.total,
-        };
+        return fromString(searchParams.get("q")!);
       } catch {}
     }
 
@@ -107,28 +95,7 @@ function App() {
   const owage = calculate(state.items, sortedSplitters, state.total || 0);
 
   useEffect(() => {
-    const mappedItems = JSON.stringify({
-      items: state.items.map((item) => {
-        const mappedSplitters: { [key: string]: true } = {};
-
-        for (const splitter of item.splitters) {
-          mappedSplitters[splitter] = true;
-        }
-
-        return {
-          ...item,
-          splitters: mappedSplitters,
-        };
-      }),
-      splitters: sortedSplitters,
-      total: state.total,
-    });
-
-    if (btoa(mappedItems).length > 2048) {
-      alert("hello");
-    }
-
-    window.history.replaceState(null, "", `/?q=${btoa(mappedItems)}`);
+    window.history.replaceState(null, "", `/?q=${toString(state)}`);
   });
 
   const [addedName, setAddedName] = useState<string>("");
