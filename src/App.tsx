@@ -40,10 +40,20 @@ function App() {
 
     return {
       items: [],
-      splitters: new Set(["Teddy", "Amol", "Nenya"]),
+      splitters: new Set([]),
       total: undefined,
     };
   });
+
+  const addSplitter = useCallback(
+    (splitter) =>
+      setState(
+        produce((state) => {
+          state.splitters.add(splitter);
+        })
+      ),
+    [state.splitters]
+  );
 
   const addItem = useCallback(
     () =>
@@ -121,8 +131,24 @@ function App() {
     window.history.replaceState(null, "", `/?q=${btoa(mappedItems)}`);
   });
 
+  const [addedName, setAddedName] = useState<string>("");
+
   return (
     <div className="App">
+      <input
+        type="text"
+        value={addedName}
+        onChange={(e) => setAddedName(e.target.value)}
+      />
+      <button
+        onClick={() => {
+          addSplitter(addedName);
+          setAddedName("");
+        }}
+      >
+        Add Splitter
+      </button>
+
       <table>
         <thead>
           <tr>
