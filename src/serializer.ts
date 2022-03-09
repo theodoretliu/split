@@ -4,6 +4,8 @@ interface Intermediate {
   splitters: Array<string>;
   data: Array<Array<undefined | number | string>>;
   total: undefined | number;
+  venmo: string;
+  description: string;
 }
 
 function toIntermediate(state: State): Intermediate {
@@ -27,6 +29,8 @@ function toIntermediate(state: State): Intermediate {
     splitters,
     data,
     total: state.total,
+    venmo: state.venmo,
+    description: state.description,
   };
 }
 
@@ -50,13 +54,15 @@ function fromIntermediate(intermediate: Intermediate): State {
     items,
     splitters: splittersSet,
     total: intermediate.total,
+    venmo: intermediate.venmo,
+    description: intermediate.description,
   };
 }
 
 export function toString(state: State): string {
-  return btoa(JSON.stringify(toIntermediate(state)));
+  return JSON.stringify(toIntermediate(state));
 }
 
 export function fromString(str: string): State {
-  return fromIntermediate(JSON.parse(atob(str)));
+  return fromIntermediate(JSON.parse(str));
 }
