@@ -60,9 +60,9 @@ function fromIntermediate(intermediate: Intermediate): State {
 }
 
 export function toString(state: State): string {
-  return JSON.stringify(toIntermediate(state));
+  return btoa(JSON.stringify(toIntermediate(state)));
 }
 
 export function fromString(str: string): State {
-  return fromIntermediate(JSON.parse(str));
+  return fromIntermediate(JSON.parse(atob(str)));
 }
