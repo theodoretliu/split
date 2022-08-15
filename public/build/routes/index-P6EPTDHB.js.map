@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["browser-route-module:routes/index.tsx?browser", "../../../app/routes/index.tsx"],
+  "sourcesContent": ["export { default } from \"./routes/index.tsx\";", "import { json } from \"@remix-run/node\";\nimport { useLoaderData } from \"@remix-run/react\";\nimport { Navigate } from \"react-router-dom\";\n\nexport const loader = async () => {\n  const res = await fetch(\"http://localhost:3000/splits\", { method: \"POST\" });\n  const j = await res.json();\n\n  return json(j);\n};\n\nexport default function Index() {\n  const data = useLoaderData();\n\n  return <Navigate to={`/${data.id}`} />;\n}\n"],
+  "mappings": ";;;;;;;;;AAAA;;;ACAA;AAEA;AASe,iBAAiB;AAC9B,QAAM,OAAO;AAEb,SAAO,oCAAC,UAAD;AAAA,IAAU,IAAI,IAAI,KAAK;AAAA;AAAA;",
+  "names": []
+}
