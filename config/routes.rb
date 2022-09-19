@@ -3,6 +3,5 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "splits#index"
-
-  get "*a", to: "splits#index"
+  get "*react", to: "splits#index"
 end
