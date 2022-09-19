@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["browser-route-module:routes/$splitId.tsx?browser", "../../../app/routes/$splitId.tsx"],
+  "sourcesContent": ["export { default } from \"./routes/$splitId.tsx\";", "export default function Split() {\n  return <div>hello</div>;\n}\n"],
+  "mappings": ";;;;;;AAAA;;;ACAA;AAAe,iBAAiB;AAC9B,SAAO,oCAAC,OAAD,MAAK;AAAA;",
+  "names": []
+}
