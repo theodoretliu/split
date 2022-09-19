@@ -1,2 +1,0 @@
-class Split < ApplicationRecord 
-end
