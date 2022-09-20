@@ -1,5 +1,5 @@
 class SplitsController < ApplicationController
-  include ActionController::Cookies
+  skip_forgery_protection
 
   before_action :set_user_cookie
   before_action :get_split, only: [:update, :show]

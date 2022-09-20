@@ -3,5 +3,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "splits#index"
+
+  scope :api do 
+    resources :splits
+  end
+
   get "*react", to: "splits#index"
 end

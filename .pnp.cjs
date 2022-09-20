@@ -37,6 +37,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.0.20"],\
             ["@types/react-dom", "npm:18.0.6"],\
             ["esbuild", "npm:0.15.8"],\
+            ["mobx", "npm:6.6.2"],\
+            ["mobx-react", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:7.5.3"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:18.2.0"],\
             ["react-router-dom", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:6.4.0"],\
@@ -362,6 +364,84 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["mobx", [\
+        ["npm:6.6.2", {\
+          "packageLocation": "./.yarn/cache/mobx-npm-6.6.2-a49d7a3c98-b913abea51.zip/node_modules/mobx/",\
+          "packageDependencies": [\
+            ["mobx", "npm:6.6.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["mobx-react", [\
+        ["npm:7.5.3", {\
+          "packageLocation": "./.yarn/cache/mobx-react-npm-7.5.3-9f7c058c43-6c1c1edc77.zip/node_modules/mobx-react/",\
+          "packageDependencies": [\
+            ["mobx-react", "npm:7.5.3"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:7.5.3", {\
+          "packageLocation": "./.yarn/__virtual__/mobx-react-virtual-a67096426a/0/cache/mobx-react-npm-7.5.3-9f7c058c43-6c1c1edc77.zip/node_modules/mobx-react/",\
+          "packageDependencies": [\
+            ["mobx-react", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:7.5.3"],\
+            ["@types/mobx", null],\
+            ["@types/react", "npm:18.0.20"],\
+            ["@types/react-dom", "npm:18.0.6"],\
+            ["@types/react-native", null],\
+            ["mobx", "npm:6.6.2"],\
+            ["mobx-react-lite", "virtual:a67096426ab5e6d85f58fa91926649a88c8e65793e9dde46cceb9153a4034214300e419a5abac78e030d00695505a0f74af15687de5abbc27be0ad6d3735898d#npm:3.4.0"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:18.2.0"],\
+            ["react-native", null]\
+          ],\
+          "packagePeers": [\
+            "@types/mobx",\
+            "@types/react-dom",\
+            "@types/react-native",\
+            "@types/react",\
+            "mobx",\
+            "react-dom",\
+            "react-native",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["mobx-react-lite", [\
+        ["npm:3.4.0", {\
+          "packageLocation": "./.yarn/cache/mobx-react-lite-npm-3.4.0-26d039ddfd-9294e127e2.zip/node_modules/mobx-react-lite/",\
+          "packageDependencies": [\
+            ["mobx-react-lite", "npm:3.4.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:a67096426ab5e6d85f58fa91926649a88c8e65793e9dde46cceb9153a4034214300e419a5abac78e030d00695505a0f74af15687de5abbc27be0ad6d3735898d#npm:3.4.0", {\
+          "packageLocation": "./.yarn/__virtual__/mobx-react-lite-virtual-1ab2fb6bc5/0/cache/mobx-react-lite-npm-3.4.0-26d039ddfd-9294e127e2.zip/node_modules/mobx-react-lite/",\
+          "packageDependencies": [\
+            ["mobx-react-lite", "virtual:a67096426ab5e6d85f58fa91926649a88c8e65793e9dde46cceb9153a4034214300e419a5abac78e030d00695505a0f74af15687de5abbc27be0ad6d3735898d#npm:3.4.0"],\
+            ["@types/mobx", null],\
+            ["@types/react", "npm:18.0.20"],\
+            ["@types/react-dom", "npm:18.0.6"],\
+            ["@types/react-native", null],\
+            ["mobx", "npm:6.6.2"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:18.2.0"],\
+            ["react-native", null]\
+          ],\
+          "packagePeers": [\
+            "@types/mobx",\
+            "@types/react-dom",\
+            "@types/react-native",\
+            "@types/react",\
+            "mobx",\
+            "react-dom",\
+            "react-native",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["react", [\
         ["npm:18.2.0", {\
           "packageLocation": "./.yarn/cache/react-npm-18.2.0-1eae08fee2-88e38092da.zip/node_modules/react/",\
@@ -465,6 +545,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.0.20"],\
             ["@types/react-dom", "npm:18.0.6"],\
             ["esbuild", "npm:0.15.8"],\
+            ["mobx", "npm:6.6.2"],\
+            ["mobx-react", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:7.5.3"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:18.2.0"],\
             ["react-router-dom", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:6.4.0"],\
