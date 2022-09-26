@@ -25,8 +25,6 @@ class SplitsController < ApplicationController
     s = Split.find_by(id: params[:id])
     return head :not_found if s.nil?
 
-    puts cookies.encrypted[:user_id]
-    puts @split.user_id
     render json: { id: s.id, data: s.data, read_only: @split.user_id != cookies.encrypted[:user_id] }
   end
 
@@ -43,6 +41,7 @@ class SplitsController < ApplicationController
   end
 
   def get_split 
+    puts params[:id]
     s = Split.find_by(id: params[:id])
     return head :not_found if s.nil?
     @split = s

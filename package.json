@@ -3,9 +3,11 @@
   "packageManager": "yarn@3.2.3",
   "dependencies": {
     "@remix-run/router": "^1.0.0",
+    "@types/lodash": "^4.14.185",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
     "esbuild": "^0.15.8",
+    "lodash": "^4.17.21",
     "mobx": "^6.6.2",
     "mobx-react": "^7.5.3",
     "react": "^18.2.0",

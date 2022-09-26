@@ -7,11 +7,11 @@ export const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/split" element={<Split />} />
+        <Route path="/splits" element={<Split />} />
 
-        <Route path="/split/:id" element={<SplitSingle />} />
+        <Route path="/splits/:id" element={<SplitSingle />} />
 
-        <Route path="*" element={<Navigate to="/split" />} />
+        <Route path="*" element={<Navigate to="/splits" />} />
       </Routes>
     </BrowserRouter>
   );

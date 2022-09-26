@@ -34,9 +34,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["@remix-run/router", "npm:1.0.0"],\
+            ["@types/lodash", "npm:4.14.185"],\
             ["@types/react", "npm:18.0.20"],\
             ["@types/react-dom", "npm:18.0.6"],\
             ["esbuild", "npm:0.15.8"],\
+            ["lodash", "npm:4.17.21"],\
             ["mobx", "npm:6.6.2"],\
             ["mobx-react", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:7.5.3"],\
             ["react", "npm:18.2.0"],\
@@ -71,6 +73,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@remix-run-router-npm-1.0.0-904bc29351-2e7543c714.zip/node_modules/@remix-run/router/",\
           "packageDependencies": [\
             ["@remix-run/router", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/lodash", [\
+        ["npm:4.14.185", {\
+          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.185-974674435a-f81d13da5e.zip/node_modules/@types/lodash/",\
+          "packageDependencies": [\
+            ["@types/lodash", "npm:4.14.185"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -354,6 +365,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["lodash", [\
+        ["npm:4.17.21", {\
+          "packageLocation": "./.yarn/cache/lodash-npm-4.17.21-6382451519-eb835a2e51.zip/node_modules/lodash/",\
+          "packageDependencies": [\
+            ["lodash", "npm:4.17.21"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["loose-envify", [\
         ["npm:1.4.0", {\
           "packageLocation": "./.yarn/cache/loose-envify-npm-1.4.0-6307b72ccf-6517e24e0c.zip/node_modules/loose-envify/",\
@@ -542,9 +562,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["split", "workspace:."],\
             ["@remix-run/router", "npm:1.0.0"],\
+            ["@types/lodash", "npm:4.14.185"],\
             ["@types/react", "npm:18.0.20"],\
             ["@types/react-dom", "npm:18.0.6"],\
             ["esbuild", "npm:0.15.8"],\
+            ["lodash", "npm:4.17.21"],\
             ["mobx", "npm:6.6.2"],\
             ["mobx-react", "virtual:a52709e30e0350cbcea8f6df2fe234716d37b4ff973936d4ce498772e603dc77ae13f82fd4a737277473902de4039c8721eea3a0d8146fa50da75c9b07b72d12#npm:7.5.3"],\
             ["react", "npm:18.2.0"],\

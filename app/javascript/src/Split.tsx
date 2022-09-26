@@ -16,7 +16,7 @@ export const Split = () => {
   }, []);
 
   if (id) {
-    return <Navigate to={`/split/${id}`} />;
+    return <Navigate to={`/splits/${id}`} />;
   }
 
   return <div />;
