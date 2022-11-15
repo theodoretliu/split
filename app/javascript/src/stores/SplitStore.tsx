@@ -22,6 +22,7 @@ export class SplitStore {
   items: Array<Item> = [{ name: "", splitters: new Set() }];
   splitters: Set<string> = new Set();
   total: number = 0;
+  dirty: boolean = false;
 
   updateDisposer?: () => void;
 
@@ -88,6 +89,7 @@ export class SplitStore {
         },
       }),
     });
+    this.dirty = false;
   };
 
   reactToUpdates = () => {
@@ -114,40 +116,48 @@ export class SplitStore {
 
   @action setVenmo = (venmo: string) => {
     this.venmo = venmo;
+    this.dirty = true;
   };
 
   @action setDescription = (description: string) => {
     this.description = description;
+    this.dirty = true;
   };
 
   @action addSplitter = (name: string) => {
     this.splitters.add(name);
+    this.dirty = true;
   };
 
   @action removeSplitter = (name: string) => {
     this.splitters.delete(name);
+    this.dirty = true;
   };
 
   @action addItem = () => {
     this.items.push({ name: "", splitters: new Set() });
+    this.dirty = true;
   };
 
   @action removeItem = (i: number) => {
     if (i >= 0 && i < this.items.length) {
       this.items.splice(i, 1);
     }
+    this.dirty = true;
   };
 
   @action editItemName = (i: number, name: string) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].name = name;
     }
+    this.dirty = true;
   };
 
   @action editItemPrice = (i: number, price: number | undefined) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].price = price;
     }
+    this.dirty = true;
   };
 
   @action toggleSplitterOnItem = (i: number, name: string) => {
@@ -158,21 +168,25 @@ export class SplitStore {
         this.items[i].splitters.add(name);
       }
     }
+    this.dirty = true;
   };
 
   @action addSplitterToItem = (i: number, name: string) => {
     if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
       this.items[i].splitters.add(name);
     }
+    this.dirty = true;
   };
 
   @action removeSplitterFromItem = (i: number, name: string) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].splitters.delete(name);
     }
+    this.dirty = true;
   };
 
   @action setTotal = (total: number) => {
     this.total = total;
+    this.dirty = true;
   };
 }

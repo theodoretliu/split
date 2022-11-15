@@ -29,6 +29,8 @@ interface SplitSingleImplProps {
     toggleSplitterOnItem: (i: number, name: string) => void;
     removeItem: (i: number) => void;
     setTotal: (total: number) => void;
+
+    dirty: boolean;
   };
 }
 
@@ -171,6 +173,8 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
           description={store.description}
         />
       ))}
+
+      <div>{store.dirty ? "Saving..." : "Saved"}</div>
     </div>
   );
 });
