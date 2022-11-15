@@ -73,8 +73,11 @@ export class Split {
     this.saveHandler = reaction(
       () => this.asJSON,
       debounce(
-        action((value) => {
-          this.store.updateSplit(this);
+        action(async (value) => {
+          await this.store.updateSplit(this);
+          runInAction(() => {
+            this.dirty = false;
+          });
         }),
         1000
       ),
@@ -86,18 +89,31 @@ export class Split {
     this.saveHandler();
   };
 
-  updateFromJson = (id, { venmo, total, description, items, splitters }) => {
+  updateFromJson = (
+    id: string,
+    {
+      venmo,
+      total,
+      description,
+      items,
+      splitters,
+    }: {
+      venmo?: string;
+      total?: number;
+      description?: string;
+      items: { name: string; price?: number; splitters: Array<string> }[];
+      splitters: string[];
+    }
+  ) => {
     this.id = id ?? "";
     this.venmo = venmo ?? "";
     this.total = total ?? 0;
     this.description = description ?? "";
     if (items && items.length > 0) {
-      this.items = items.map(
-        (item: { name: string; price?: number; splitters: Array<string> }) => ({
-          ...item,
-          splitters: new Set(item.splitters),
-        })
-      );
+      this.items = items.map((item) => ({
+        ...item,
+        splitters: new Set(item.splitters),
+      }));
     } else {
       this.items = [{ name: "", splitters: new Set() }];
     }
@@ -119,17 +135,6 @@ export class Split {
     }));
   }
 
-  updateSplit = async () => {
-    await fetch(`/splits/${this.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    });
-    this.dirty = false;
-  };
-
   get asJSON() {
     return {
       venmo: this.venmo,
@@ -140,47 +145,50 @@ export class Split {
     };
   }
 
-  // @action dispose = () => {
-  //   this.updateDisposer?.();
-  //   this.updateDisposer = undefined;
-  // };
-
   @action setVenmo = (venmo: string) => {
     this.venmo = venmo;
+    this.dirty = true;
   };
 
   @action setDescription = (description: string) => {
     this.description = description;
+    this.dirty = true;
   };
 
   @action addSplitter = (name: string) => {
     this.splitters.add(name);
+    this.dirty = true;
   };
 
   @action removeSplitter = (name: string) => {
     this.splitters.delete(name);
+    this.dirty = true;
   };
 
   @action addItem = () => {
     this.items.push({ name: "", splitters: new Set() });
+    this.dirty = true;
   };
 
   @action removeItem = (i: number) => {
     if (i >= 0 && i < this.items.length) {
       this.items.splice(i, 1);
     }
+    this.dirty = true;
   };
 
   @action editItemName = (i: number, name: string) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].name = name;
     }
+    this.dirty = true;
   };
 
   @action editItemPrice = (i: number, price: number | undefined) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].price = price;
     }
+    this.dirty = true;
   };
 
   @action toggleSplitterOnItem = (i: number, name: string) => {
@@ -191,22 +199,26 @@ export class Split {
         this.items[i].splitters.add(name);
       }
     }
+    this.dirty = true;
   };
 
   @action addSplitterToItem = (i: number, name: string) => {
     if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
       this.items[i].splitters.add(name);
     }
+    this.dirty = true;
   };
 
   @action removeSplitterFromItem = (i: number, name: string) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].splitters.delete(name);
     }
+    this.dirty = true;
   };
 
   @action setTotal = (total: number) => {
     this.total = total;
+    this.dirty = true;
   };
 }
 
