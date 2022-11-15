@@ -72,3 +72,5 @@ group :test do
 end
 
 gem "jsbundling-rails", "~> 1.0"
+
+gem "pry-rails", "~> 0.3.9"

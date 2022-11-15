@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { action, runInAction } from "mobx";
 import { useParams } from "react-router-dom";
-import { Item, SplitStore } from "src/stores/SplitStore";
+import { Item, SplitStore, store } from "src/stores/SplitStore";
 import { Owage } from "src/Owage";
 
 interface SplitSingleImplProps {
-  store: {
+  split: {
     venmo: string;
     description: string;
     splitters: Set<string>;
@@ -34,7 +35,7 @@ interface SplitSingleImplProps {
   };
 }
 
-export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
+export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
   const [addedName, setAddedName] = useState("");
 
   return (
@@ -43,8 +44,8 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
         <label>Venmo Username</label>
         <input
           type="text"
-          value={store.venmo}
-          onChange={(e) => store.setVenmo(e.target.value)}
+          value={split.venmo}
+          onChange={action((e) => split.setVenmo(e.target.value))}
         />
       </div>
 
@@ -52,8 +53,8 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
         <label>Description</label>
         <input
           type="text"
-          value={store.description}
-          onChange={(e) => store.setDescription(e.target.value)}
+          value={split.description}
+          onChange={action((e) => split.setDescription(e.target.value))}
         />
       </div>
 
@@ -63,19 +64,19 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
           type="text"
           value={addedName}
           onChange={(e) => setAddedName(e.target.value)}
-          onKeyPress={(e) => {
+          onKeyDown={action((e) => {
             if (e.key === "Enter") {
-              store.addSplitter(addedName);
+              split.addSplitter(addedName);
               setAddedName("");
             }
-          }}
+          })}
         />
         <button
           tabIndex={-1}
-          onClick={() => {
-            store.addSplitter(addedName);
+          onClick={action(() => {
+            split.addSplitter(addedName);
             setAddedName("");
-          }}
+          })}
         >
           Add Splitter
         </button>
@@ -88,21 +89,23 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
 
             <th>Price</th>
 
-            {store.sortedSplitters.map((splitter) => (
+            {split.sortedSplitters.map((splitter) => (
               <th key={splitter}>{splitter}</th>
             ))}
           </tr>
         </thead>
 
         <tbody>
-          {store.items.map((item, i) => {
+          {split.items.map((item, i) => {
             return (
               <tr key={i}>
                 <td>
                   <input
                     type="text"
                     value={item.name}
-                    onChange={(e) => store.editItemName(i, e.target.value)}
+                    onChange={action((e) =>
+                      split.editItemName(i, e.target.value)
+                    )}
                   />
                 </td>
 
@@ -110,22 +113,22 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
                   <input
                     type="number"
                     value={item.price ?? ""}
-                    onChange={(e) =>
-                      store.editItemPrice(i, parseFloat(e.target.value))
-                    }
-                    onKeyDown={(e) => {
+                    onChange={action((e) =>
+                      split.editItemPrice(i, parseFloat(e.target.value))
+                    )}
+                    onKeyDown={action((e) => {
                       if (
                         e.key === "Tab" &&
                         !e.shiftKey &&
-                        i === store.items.length - 1
+                        i === split.items.length - 1
                       ) {
-                        store.addItem();
+                        split.addItem();
                       }
-                    }}
+                    })}
                   />
                 </td>
 
-                {store.sortedSplitters.map((splitter) => {
+                {split.sortedSplitters.map((splitter) => {
                   return (
                     <td
                       style={{
@@ -135,7 +138,9 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
                           : "",
                         border: "1px solid blue",
                       }}
-                      onClick={() => store.toggleSplitterOnItem(i, splitter)}
+                      onClick={action(() =>
+                        split.toggleSplitterOnItem(i, splitter)
+                      )}
                     ></td>
                   );
                 })}
@@ -144,58 +149,56 @@ export const SplitSingleImpl = observer(({ store }: SplitSingleImplProps) => {
           })}
           <tr>
             <td>Subtotal</td>
-            <td>{store.owage.subtotal.toFixed(2)}</td>
+            <td>{split.owage.subtotal.toFixed(2)}</td>
 
-            {store.sortedSplitters.map((splitter) => (
-              <td>{store.owage.subtotals[splitter].toFixed(2)}</td>
+            {split.sortedSplitters.map((splitter) => (
+              <td>{split.owage.subtotals[splitter].toFixed(2)}</td>
             ))}
           </tr>
         </tbody>
       </table>
 
-      <button onClick={() => store.addItem()}>Add Item</button>
+      <button onClick={() => split.addItem()}>Add Item</button>
 
       <div>
         <span>Total: </span>
         <input
           type="number"
-          value={store.total}
-          onChange={(e) => store.setTotal(parseFloat(e.target.value))}
+          value={split.total}
+          onChange={action((e) => split.setTotal(parseFloat(e.target.value)))}
         />
       </div>
 
-      {store.sortedSplitters.map((splitter) => (
+      {split.sortedSplitters.map((splitter) => (
         <Owage
           key={splitter}
           name={splitter}
-          amount={store.owage.owage[splitter]}
-          venmo={store.venmo}
-          description={store.description}
+          amount={split.owage.owage[splitter]}
+          venmo={split.venmo}
+          description={split.description}
         />
       ))}
 
-      <div>{store.dirty ? "Saving..." : "Saved"}</div>
+      <div>{split.dirty ? "Saving..." : "Saved"}</div>
     </div>
   );
 });
 
-export const SplitSingle = () => {
+export const SplitSingle = observer(() => {
   const { id } = useParams();
 
-  const [store] = useState(() => new SplitStore(id!));
+  useEffect(
+    action(() => {
+      store.fetchSplit(id!);
+    }),
+    []
+  );
 
-  useEffect(() => {
-    const f = async () => {
-      await store.fetchSplit();
-      store.reactToUpdates();
-    };
+  const split = store.getSplit(id!);
 
-    f();
+  if (!split) {
+    return null;
+  }
 
-    return () => {
-      store.dispose();
-    };
-  }, []);
-
-  return <SplitSingleImpl store={store} />;
-};
+  return <SplitComp split={split} />;
+});

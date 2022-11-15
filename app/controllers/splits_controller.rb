@@ -6,6 +6,8 @@ class SplitsController < ApplicationController
   before_action :require_user_cookie_match, only: [:update]
 
   def index
+    s = Split.create!(id: SecureRandom.uuid, user_id: @user_id, data: {})
+    redirect_to(split_path(s.id))
   end
 
   def update
@@ -25,7 +27,10 @@ class SplitsController < ApplicationController
     s = Split.find_by(id: params[:id])
     return head :not_found if s.nil?
 
-    render json: { id: s.id, data: s.data, read_only: @split.user_id != cookies.encrypted[:user_id] }
+    respond_to do |format|
+      format.html { render "index" }
+      format.json { render json: { id: s.id, data: s.data, read_only: @split.user_id != cookies.encrypted[:user_id] } }
+    end
   end
 
   def set_user_cookie 
