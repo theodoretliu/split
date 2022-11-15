@@ -74,3 +74,5 @@ end
 gem "jsbundling-rails", "~> 1.0"
 
 gem "pry-rails", "~> 0.3.9"
+
+gem "pg", "~> 1.4"
