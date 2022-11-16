@@ -32,7 +32,7 @@ export class SplitStore {
 
     runInAction(() => {
       const split = new Split(this);
-      split.updateFromJson(json.id, json.data);
+      split.updateFromJson(json.id, json.data, json.read_only);
       this.splits.push(split);
     });
   };
@@ -62,6 +62,7 @@ export class Split {
   splitters: Set<string> = new Set();
   total: number = 0;
   store: SplitStore;
+  readOnly: boolean = true;
   dirty: boolean = false;
 
   saveHandler: IReactionDisposer;
@@ -103,12 +104,17 @@ export class Split {
       description?: string;
       items: { name: string; price?: number; splitters: Array<string> }[];
       splitters: string[];
-    }
+    },
+    read_only: boolean | undefined
   ) => {
     this.id = id ?? "";
     this.venmo = venmo ?? "";
     this.total = total ?? 0;
     this.description = description ?? "";
+    this.readOnly  = read_only ?? true;
+
+    console.log(this.readOnly, read_only);
+
     if (items && items.length > 0) {
       this.items = items.map((item) => ({
         ...item,
@@ -145,53 +151,54 @@ export class Split {
     };
   }
 
-  @action setVenmo = (venmo: string) => {
+  createSetField = <T extends any[],>(f: (...args: T) => void) => action((...args: T) => {
+    if (this.readOnly) {
+      return;
+    }
+
+    f(...args);
+    this.dirty = true;
+  })
+
+  @action setVenmo = this.createSetField((venmo: string) => {
     this.venmo = venmo;
-    this.dirty = true;
-  };
+  });
 
-  @action setDescription = (description: string) => {
+  @action setDescription = this.createSetField((description: string) => {
     this.description = description;
-    this.dirty = true;
-  };
+  });
 
-  @action addSplitter = (name: string) => {
+  @action addSplitter = this.createSetField((name: string) => {
     this.splitters.add(name);
-    this.dirty = true;
-  };
+  });
 
-  @action removeSplitter = (name: string) => {
+  @action removeSplitter = this.createSetField((name: string) => {
     this.splitters.delete(name);
-    this.dirty = true;
-  };
+  });
 
-  @action addItem = () => {
+  @action addItem = this.createSetField(() => {
     this.items.push({ name: "", splitters: new Set() });
-    this.dirty = true;
-  };
+  });
 
-  @action removeItem = (i: number) => {
+  @action removeItem = this.createSetField((i: number) => {
     if (i >= 0 && i < this.items.length) {
       this.items.splice(i, 1);
     }
-    this.dirty = true;
-  };
+  });
 
-  @action editItemName = (i: number, name: string) => {
+  @action editItemName = this.createSetField((i: number, name: string) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].name = name;
     }
-    this.dirty = true;
-  };
+  });
 
-  @action editItemPrice = (i: number, price: number | undefined) => {
+  @action editItemPrice = this.createSetField((i: number, price: number | undefined) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].price = price;
     }
-    this.dirty = true;
-  };
+  });
 
-  @action toggleSplitterOnItem = (i: number, name: string) => {
+  @action toggleSplitterOnItem = this.createSetField((i: number, name: string) => {
     if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
       if (this.items[i].splitters.has(name)) {
         this.items[i].splitters.delete(name);
@@ -199,27 +206,23 @@ export class Split {
         this.items[i].splitters.add(name);
       }
     }
-    this.dirty = true;
-  };
+  });
 
-  @action addSplitterToItem = (i: number, name: string) => {
+  @action addSplitterToItem = this.createSetField((i: number, name: string) => {
     if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
       this.items[i].splitters.add(name);
     }
-    this.dirty = true;
-  };
+  });
 
-  @action removeSplitterFromItem = (i: number, name: string) => {
+  @action removeSplitterFromItem = this.createSetField((i: number, name: string) => {
     if (i >= 0 && i < this.items.length) {
       this.items[i].splitters.delete(name);
     }
-    this.dirty = true;
-  };
+  });
 
-  @action setTotal = (total: number) => {
+  @action setTotal = this.createSetField((total: number) => {
     this.total = total;
-    this.dirty = true;
-  };
+  });
 }
 
 export const store = new SplitStore();
