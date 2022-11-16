@@ -19,7 +19,7 @@ class SplitsController < ApplicationController
       final_data[:splitters] = decoded_data[:splitters]
       final_data[:items] = []
 
-      splitters_map = final_data[:splitters].map { |splitter, i| [i, splitter] }.to_h
+      splitters_map = final_data[:splitters].map.with_index { |splitter, i| [i, splitter] }.to_h
 
       decoded_data[:data].each do |item|
         item_name = item[0]
@@ -32,7 +32,7 @@ class SplitsController < ApplicationController
           splitters: [],
         }
 
-        item_splitters.each do |check, i|
+        item_splitters.each_with_index do |check, i|
           if check == 1
             final_item[:splitters] << splitters_map[i]
           end
