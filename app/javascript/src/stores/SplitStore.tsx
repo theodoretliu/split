@@ -113,8 +113,6 @@ export class Split {
     this.description = description ?? "";
     this.readOnly  = read_only ?? true;
 
-    console.log(this.readOnly, read_only);
-
     if (items && items.length > 0) {
       this.items = items.map((item) => ({
         ...item,

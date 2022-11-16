@@ -221,7 +221,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jsbundling-rails (~> 1.0)
-  pg
+  pg (~> 1.4)
   pry-rails (~> 0.3.9)
   puma (~> 5.0)
   rails (~> 7.0.3, >= 7.0.3.1)

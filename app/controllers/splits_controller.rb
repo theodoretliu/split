@@ -6,7 +6,45 @@ class SplitsController < ApplicationController
   before_action :require_user_cookie_match, only: [:update]
 
   def index
-    s = Split.create!(id: SecureRandom.uuid, user_id: @user_id, data: {})
+    data = {}
+
+    if params[:q]
+      decoded_data = JSON.parse(Base64.decode64(params[:q])).with_indifferent_access
+
+      final_data = {}
+
+      final_data[:total] = decoded_data[:total]
+      final_data[:venmo] = decoded_data[:venmo]
+      final_data[:description] = decoded_data[:description]
+      final_data[:splitters] = decoded_data[:splitters]
+      final_data[:items] = []
+
+      splitters_map = final_data[:splitters].map { |splitter, i| [i, splitter] }.to_h
+
+      decoded_data[:data].each do |item|
+        item_name = item[0]
+        item_price = item[1]
+        item_splitters = item[2..]
+
+        final_item = {
+          name: item_name,
+          price: item_price,
+          splitters: [],
+        }
+
+        item_splitters.each do |check, i|
+          if check == 1
+            final_item[:splitters] << splitters_map[i]
+          end
+        end
+
+        final_data[:items] << final_item
+      end
+
+      data = final_data
+    end
+
+    s = Split.create!(id: SecureRandom.uuid, user_id: @user_id, data: data)
     redirect_to(split_path(s.id))
   end
 
