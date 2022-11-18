@@ -10,11 +10,16 @@ import {
 import { debounce } from "lodash";
 import { calculate } from "src/calculate";
 
-export type Item = {
+export interface Item {
   name: string;
   price?: number;
+  unparsedPrice?: string;
   splitters: Set<string>;
-};
+}
+
+export interface ValidatedItem extends Item {
+  valid: boolean;
+}
 
 export class SplitStore {
   splits: Split[] = [];
@@ -102,7 +107,12 @@ export class Split {
       venmo?: string;
       total?: number;
       description?: string;
-      items: { name: string; price?: number; splitters: Array<string> }[];
+      items: {
+        name: string;
+        price?: number;
+        unparsedPrice?: string;
+        splitters: Array<string>;
+      }[];
       splitters: string[];
     },
     read_only: boolean | undefined
@@ -111,11 +121,12 @@ export class Split {
     this.venmo = venmo ?? "";
     this.total = total ?? 0;
     this.description = description ?? "";
-    this.readOnly  = read_only ?? true;
+    this.readOnly = read_only ?? true;
 
     if (items && items.length > 0) {
       this.items = items.map((item) => ({
         ...item,
+        unparsedPrice: item.unparsedPrice ?? item.price?.toString(),
         splitters: new Set(item.splitters),
       }));
     } else {
@@ -129,7 +140,11 @@ export class Split {
   }
 
   @computed get owage() {
-    return calculate(this.items, this.sortedSplitters, this.total || 0);
+    return calculate(
+      this.validatedItems,
+      this.sortedSplitters,
+      this.total || 0
+    );
   }
 
   @computed get sendableItems() {
@@ -137,6 +152,24 @@ export class Split {
       ...item,
       splitters: Array.from(item.splitters),
     }));
+  }
+
+  @computed get validatedItems() {
+    return this.items.map((item) => {
+      let valid = true;
+      if (
+        item.unparsedPrice &&
+        item.unparsedPrice !== "" &&
+        isNaN(Number(item.unparsedPrice ?? ""))
+      ) {
+        valid = false;
+      }
+
+      return {
+        ...item,
+        valid,
+      };
+    });
   }
 
   get asJSON() {
@@ -149,14 +182,15 @@ export class Split {
     };
   }
 
-  createSetField = <T extends any[],>(f: (...args: T) => void) => action((...args: T) => {
-    if (this.readOnly) {
-      return;
-    }
+  createSetField = <T extends any[]>(f: (...args: T) => void) =>
+    action((...args: T) => {
+      if (this.readOnly) {
+        return;
+      }
 
-    f(...args);
-    this.dirty = true;
-  })
+      f(...args);
+      this.dirty = true;
+    });
 
   @action setVenmo = this.createSetField((venmo: string) => {
     this.venmo = venmo;
@@ -190,21 +224,25 @@ export class Split {
     }
   });
 
-  @action editItemPrice = this.createSetField((i: number, price: number | undefined) => {
-    if (i >= 0 && i < this.items.length) {
-      this.items[i].price = price;
-    }
-  });
-
-  @action toggleSplitterOnItem = this.createSetField((i: number, name: string) => {
-    if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
-      if (this.items[i].splitters.has(name)) {
-        this.items[i].splitters.delete(name);
-      } else {
-        this.items[i].splitters.add(name);
+  @action editItemPrice = this.createSetField(
+    (i: number, unparsedPrice: string) => {
+      if (i >= 0 && i < this.items.length) {
+        this.items[i].unparsedPrice = unparsedPrice;
       }
     }
-  });
+  );
+
+  @action toggleSplitterOnItem = this.createSetField(
+    (i: number, name: string) => {
+      if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
+        if (this.items[i].splitters.has(name)) {
+          this.items[i].splitters.delete(name);
+        } else {
+          this.items[i].splitters.add(name);
+        }
+      }
+    }
+  );
 
   @action addSplitterToItem = this.createSetField((i: number, name: string) => {
     if (i >= 0 && i < this.items.length && this.splitters.has(name)) {
@@ -212,11 +250,13 @@ export class Split {
     }
   });
 
-  @action removeSplitterFromItem = this.createSetField((i: number, name: string) => {
-    if (i >= 0 && i < this.items.length) {
-      this.items[i].splitters.delete(name);
+  @action removeSplitterFromItem = this.createSetField(
+    (i: number, name: string) => {
+      if (i >= 0 && i < this.items.length) {
+        this.items[i].splitters.delete(name);
+      }
     }
-  });
+  );
 
   @action setTotal = this.createSetField((total: number) => {
     this.total = total;

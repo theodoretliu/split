@@ -2,23 +2,53 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { action, runInAction } from "mobx";
 import { useParams } from "react-router-dom";
-import { Item, SplitStore, store } from "src/stores/SplitStore";
+import { Item, SplitStore, store, ValidatedItem } from "src/stores/SplitStore";
 import { Owage } from "src/Owage";
+import { Option } from "src/option";
+
+interface ListOwagesProps {
+  sortedSplitters: string[];
+  owage: {
+    owage: Record<string, number>;
+  };
+  venmo: string;
+  description: string;
+}
+const ListOwages = ({
+  sortedSplitters,
+  owage,
+  venmo,
+  description,
+}: ListOwagesProps) => {
+  return (
+    <>
+      {sortedSplitters.map((splitter) => (
+        <Owage
+          key={splitter}
+          name={splitter}
+          amount={owage.owage[splitter]}
+          venmo={venmo}
+          description={description}
+        />
+      ))}
+    </>
+  );
+};
 
 interface SplitSingleImplProps {
   split: {
     venmo: string;
     description: string;
     splitters: Set<string>;
-    items: Array<Item>;
+    validatedItems: Array<ValidatedItem>;
     total: number;
 
     sortedSplitters: Array<string>;
-    owage: {
+    owage: Option<{
       subtotal: number;
       subtotals: Record<string, number>;
       owage: Record<string, number>;
-    };
+    }>;
 
     setVenmo: (venmo: string) => void;
     setDescription: (description: string) => void;
@@ -26,7 +56,7 @@ interface SplitSingleImplProps {
     removeSplitter: (name: string) => void;
     addItem: () => void;
     editItemName: (i: number, name: string) => void;
-    editItemPrice: (i: number, price: number | undefined) => void;
+    editItemPrice: (i: number, unparsedPrice: string) => void;
     toggleSplitterOnItem: (i: number, name: string) => void;
     removeItem: (i: number) => void;
     setTotal: (total: number) => void;
@@ -96,7 +126,7 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
         </thead>
 
         <tbody>
-          {split.items.map((item, i) => {
+          {split.validatedItems.map((item, i) => {
             return (
               <tr key={i}>
                 <td>
@@ -111,16 +141,18 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
 
                 <td>
                   <input
-                    type="number"
-                    value={item.price ?? ""}
-                    onChange={action((e) =>
-                      split.editItemPrice(i, parseFloat(e.target.value))
-                    )}
+                    style={{ border: item.valid ? "" : "1px solid red" }}
+                    type="text"
+                    inputMode="decimal"
+                    value={item.unparsedPrice ?? ""}
+                    onChange={action((e) => {
+                      split.editItemPrice(i, e.target.value);
+                    })}
                     onKeyDown={action((e) => {
                       if (
                         e.key === "Tab" &&
                         !e.shiftKey &&
-                        i === split.items.length - 1
+                        i === split.validatedItems.length - 1
                       ) {
                         split.addItem();
                       }
@@ -149,11 +181,22 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
           })}
           <tr>
             <td>Subtotal</td>
-            <td>{split.owage.subtotal.toFixed(2)}</td>
 
-            {split.sortedSplitters.map((splitter) => (
-              <td>{split.owage.subtotals[splitter].toFixed(2)}</td>
-            ))}
+            {split.owage.type === "None" ? (
+              <td colSpan={split.sortedSplitters.length + 1}>
+                There are errors in the price, please correct them
+              </td>
+            ) : (
+              ((owage) => (
+                <>
+                  <td>{owage.subtotal.toFixed(2)}</td>
+
+                  {split.sortedSplitters.map((splitter) => (
+                    <td>{owage.subtotals[splitter].toFixed(2)}</td>
+                  ))}
+                </>
+              ))(split.owage.value)
+            )}
           </tr>
         </tbody>
       </table>
@@ -169,15 +212,16 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
         />
       </div>
 
-      {split.sortedSplitters.map((splitter) => (
-        <Owage
-          key={splitter}
-          name={splitter}
-          amount={split.owage.owage[splitter]}
+      {split.owage.type === "None" ? (
+        <div>Correct errors in price before continuing</div>
+      ) : (
+        <ListOwages
+          sortedSplitters={split.sortedSplitters}
+          owage={split.owage.value}
           venmo={split.venmo}
           description={split.description}
         />
-      ))}
+      )}
 
       <div>{split.dirty ? "Saving..." : "Saved"}</div>
     </div>

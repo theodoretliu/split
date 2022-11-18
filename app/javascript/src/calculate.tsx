@@ -1,11 +1,24 @@
-import { Item } from "./App";
+import { Item, ValidatedItem } from "src/stores/SplitStore";
+
+import { Option } from "src/option";
 
 export function calculate(
-  items: Array<Item>,
+  items: Array<ValidatedItem>,
   splitters: Array<string>,
   total: number
-) {
+): Option<{
+  subtotal: number;
+  subtotals: { [splitter: string]: number };
+  owage: { [splitter: string]: number };
+}> {
+  for (const item of items) {
+    if (!item.valid) {
+      return { type: "None" };
+    }
+  }
+
   const owage: { [splitter: string]: number } = {};
+
   let subtotal = 0;
 
   for (const splitter of splitters) {
@@ -13,13 +26,15 @@ export function calculate(
   }
 
   for (const item of items) {
-    if (item.splitters.size === 0 || item.price === undefined) {
+    if (item.splitters.size === 0 || isNaN(Number(item.unparsedPrice))) {
       continue;
     }
 
-    subtotal += item.price;
+    const price = Number(item.unparsedPrice);
+
+    subtotal += price;
     for (const splitter of item.splitters) {
-      owage[splitter] += item.price / item.splitters.size;
+      owage[splitter] += price / item.splitters.size;
     }
   }
 
@@ -32,8 +47,11 @@ export function calculate(
   }
 
   return {
-    subtotal,
-    subtotals,
-    owage,
+    type: "Some",
+    value: {
+      subtotal,
+      subtotals,
+      owage,
+    },
   };
 }
