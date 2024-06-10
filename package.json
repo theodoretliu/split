@@ -31,7 +31,8 @@
     "zod": "^3.23.8"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets"
+    "local": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
+    "build": "esbuild app/javascript/*.* --bundle --outdir=app/assets/builds --public-path=assets --minify"
   },
   "devDependencies": {
     "prettier": "^2.8.8"

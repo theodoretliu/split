@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["browser-route-module:routes/$splitId.tsx?browser", "../../../app/routes/$splitId.tsx"],
-  "sourcesContent": ["export { default } from \"./routes/$splitId.tsx\";", "import { json } from \"@remix-run/node\";\nimport { useLoaderData } from \"@remix-run/react\";\n\nexport const loader = async ({ params }) => {\n  const res = await fetch(`http://localhost:3000/split/${params.splitId}`);\n  const j = await res.json();\n  return json(j);\n};\n\nexport default function Split() {\n  const data = useLoaderData();\n\n  return <div>{data.toJSON()}</div>;\n}\n"],
-  "mappings": ";;;;;;;AAAA;;;ACAA;AASe,iBAAiB;AAC9B,QAAM,OAAO;AAEb,SAAO,oCAAC,OAAD,MAAM,KAAK;AAAA;",
-  "names": []
-}

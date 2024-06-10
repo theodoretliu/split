@@ -78,3 +78,5 @@ gem "pg", "~> 1.4"
 gem "tailwindcss-rails", "~> 2.6"
 
 gem "propshaft"
+
+gem "dockerfile-rails", ">= 1.6", :group => :development

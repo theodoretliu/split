@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["browser-route-module:routes/index.tsx?browser", "../../../app/routes/index.tsx"],
-  "sourcesContent": ["export { default } from \"./routes/index.tsx\";", "import { json, redirect } from \"@remix-run/node\";\nimport { useLoaderData } from \"@remix-run/react\";\nimport { useEffect } from \"react\";\nimport { useNavigate } from \"react-router-dom\";\nimport { splitCookie } from \"../cookies\";\n\nexport const loader = async () => {\n  const res = await fetch(\"http://localhost:3000/splits\", {\n    method: \"POST\",\n    credentials: \"include\",\n  });\n\n  const j = await res.json();\n\n  return redirect(`/${j.id}`);\n};\n\nexport default function Index() {\n  return null;\n}\n"],
-  "mappings": ";;;;;AAAA;;;ACAA;AAiBe,iBAAiB;AAC9B,SAAO;AAAA;",
-  "names": []
-}
