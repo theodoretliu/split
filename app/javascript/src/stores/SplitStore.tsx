@@ -259,7 +259,7 @@ export class Split {
   );
 
   @computed get total() {
-    const parsed = parseFloat(this.rawTotal);
+    const parsed = Number(this.rawTotal);
 
     if (isNaN(parsed)) {
       return undefined;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { action, runInAction } from "mobx";
 import { useParams } from "react-router-dom";
@@ -23,23 +23,15 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "./components/ui/select";
-import { PersonSelector } from "./components/PersonSelector";
+import { PersonSelector } from "~/components/PersonSelector";
 import { Check, LoaderCircle, Plus, X } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./components/ui/tooltip";
+} from "~/components/ui/tooltip";
+import { cn } from "~/utilities";
 
 interface ListOwagesProps {
   sortedSplitters: string[];
@@ -55,18 +47,24 @@ const ListOwages = ({
   venmo,
   description,
 }: ListOwagesProps) => {
+  if (sortedSplitters.length === 0) {
+    return null;
+  }
+
   return (
     <div className="w-full rounded-md border">
       <Table className="table-fixed">
-        {sortedSplitters.map((splitter) => (
-          <Owage
-            key={splitter}
-            name={splitter}
-            amount={owage.owage[splitter]}
-            venmo={venmo}
-            description={description}
-          />
-        ))}
+        <TableBody>
+          {sortedSplitters.map((splitter) => (
+            <Owage
+              key={splitter}
+              name={splitter}
+              amount={owage.owage[splitter]}
+              venmo={venmo}
+              description={description}
+            />
+          ))}
+        </TableBody>
       </Table>
     </div>
   );
@@ -80,14 +78,16 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
   const [addedName, setAddedName] = useState("");
 
   return (
-    <div className="p-4 pb-12">
+    <div className="p-4 pb-12 max-w-[1024px] mx-auto">
       <div className="flex flex-col gap-2">
         <FormItem>
           <Label>Venmo Username</Label>
           <Input
             type="text"
             value={split.venmo}
-            onChange={action((e) => split.setVenmo(e.target.value))}
+            onChange={action((e) => {
+              split.setVenmo(e.target.value);
+            })}
             placeholder="theodoretliu"
           />
         </FormItem>
@@ -135,15 +135,13 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
           <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead>Item Name</TableHead>
+                <TableHead className="pr-0">Item Name</TableHead>
 
-                <TableHead className="w-[75px]">Price</TableHead>
+                <TableHead className="w-[95px]">Price</TableHead>
 
-                {split.sortedSplitters.map((splitter) => (
-                  <TableHead key={splitter} className="hidden">
-                    {splitter}
-                  </TableHead>
-                ))}
+                <TableHead className="hidden md:table-cell">
+                  Splitters
+                </TableHead>
 
                 <TableHead className="pl-0 w-8">
                   <div className="h-full w-full flex items-center justify-center">
@@ -156,29 +154,31 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
             <TableBody>
               {split.validatedItems.map((item, i) => {
                 return (
-                  <>
+                  <Fragment key={i}>
                     <TableRow key={i}>
-                      <TableCell>
-                        <input
+                      <TableCell className="pr-0">
+                        <Input
                           type="text"
                           value={item.name}
                           onChange={action((e) =>
                             split.editItemName(i, e.target.value)
                           )}
-                          className="w-full"
+                          className="w-full px-2 py-1 h-auto"
                         />
                       </TableCell>
 
-                      <TableCell className="w-[75px]">
-                        <input
-                          style={{ border: item.valid ? "" : "1px solid red" }}
+                      <TableCell className="w-[95px]">
+                        <Input
                           type="text"
                           inputMode="decimal"
                           value={item.unparsedPrice ?? ""}
                           onChange={action((e) => {
                             split.editItemPrice(i, e.target.value);
                           })}
-                          className="w-full"
+                          className={cn(
+                            "w-full px-2 py-1 h-auto",
+                            !item.valid && "border-red-400 border"
+                          )}
                           onKeyDown={action((e) => {
                             if (
                               e.key === "Tab" &&
@@ -191,23 +191,17 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
                         />
                       </TableCell>
 
-                      {split.sortedSplitters.map((splitter) => {
-                        return (
-                          <TableCell
-                            style={{
-                              width: "24px",
-                              backgroundColor: item.splitters.has(splitter)
-                                ? "black"
-                                : "",
-                              border: "1px solid blue",
-                            }}
-                            className="hidden"
-                            onClick={action(() =>
-                              split.toggleSplitterOnItem(i, splitter)
-                            )}
-                          />
-                        );
-                      })}
+                      <TableCell className="hidden md:table-cell pl-0">
+                        <PersonSelector
+                          people={Array.from(split.splitters).map((s) => ({
+                            name: s,
+                            checked: item.splitters.has(s),
+                          }))}
+                          setPersonChecked={(name, checked) => {
+                            split.toggleSplitterOnItem(i, name);
+                          }}
+                        />
+                      </TableCell>
 
                       <TableCell className="pl-0 w-8">
                         <div className="flex flex-col items-center justify-center h-full">
@@ -218,7 +212,7 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
                       </TableCell>
                     </TableRow>
 
-                    <TableRow>
+                    <TableRow className="md:hidden">
                       <TableCell colSpan={3}>
                         <PersonSelector
                           people={Array.from(split.splitters).map((s) => ({
@@ -231,12 +225,13 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
                         />
                       </TableCell>
                     </TableRow>
-                  </>
+                  </Fragment>
                 );
               })}
 
               <TableRow>
                 <TableCell colSpan={2} />
+                <TableCell className="hidden md:table-cell" />
 
                 <TableCell className="w-8 pl-0">
                   <div className="w-full flex items-center justify-center">
@@ -251,21 +246,24 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
                 <TableCell>Subtotal</TableCell>
 
                 {split.owage.type === "None" ? (
-                  <TableCell colSpan={split.sortedSplitters.length + 1}>
-                    There are errors in the price, please correct them
-                  </TableCell>
+                  <>
+                    <TableCell className="table-cell md:hidden" colSpan={2}>
+                      There are errors in the price, please correct them
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell" colSpan={3}>
+                      There are errors in the price, please correct them
+                    </TableCell>
+                  </>
                 ) : (
                   ((owage) => (
                     <>
-                      <TableCell colSpan={2}>
+                      <TableCell className="table-cell md:hidden" colSpan={2}>
                         {owage.subtotal.toFixed(2)}
                       </TableCell>
 
-                      {split.sortedSplitters.map((splitter) => (
-                        <td className="hidden">
-                          {owage.subtotals[splitter].toFixed(2)}
-                        </td>
-                      ))}
+                      <TableCell className="hidden md:table-cell" colSpan={3}>
+                        {owage.subtotal.toFixed(2)}
+                      </TableCell>
                     </>
                   ))(split.owage.value)
                 )}
@@ -275,22 +273,27 @@ export const SplitComp = observer(({ split }: SplitSingleImplProps) => {
                 <TableCell>Total</TableCell>
 
                 <TableCell colSpan={2}>
-                  <input
+                  <Input
                     type="text"
                     inputMode="decimal"
                     value={split.rawTotal}
                     onChange={action((e) => {
                       split.rawTotal = e.target.value;
                     })}
-                    className="w-full"
+                    className={cn(
+                      "w-full px-2 py-1 h-auto",
+                      split.total === undefined && "border-red-400 border"
+                    )}
                   />
                 </TableCell>
+
+                <TableCell className="hidden md:table-cell" />
               </TableRow>
             </TableBody>
           </Table>
         </div>
 
-        {split.owage.type === "None" ? (
+        {split.owage.type === "None" || split.total === undefined ? (
           <div>Correct errors in price before continuing</div>
         ) : (
           <ListOwages
