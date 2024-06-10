@@ -2,23 +2,6 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=3.3.2
-ARG NODE_VERSION=20.11.0
-
-FROM node:$NODE_VERSION-slim as client
-
-WORKDIR /rails/frontend
-
-ENV NODE_ENV=production
-
-# Install node modules
-COPY --link frontend/package.json frontend/package-lock.json ./
-RUN npm install
-
-# build client application
-COPY --link frontend .
-RUN npm run build
-
-
 FROM ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
@@ -40,7 +23,7 @@ FROM base as build
 
 # Install packages needed to build gems and node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl libpq-dev node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential curl libpq-dev node-gyp pkg-config python-is-python3 libsqlite3-dev
 
 # Install Node.js
 ARG NODE_VERSION=20.11.0
@@ -81,14 +64,12 @@ RUN apt-get update -qq && \
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
-# Copy built client
-COPY --from=client /rails/frontend/build /rails/public
-
+# SKIPPING IN CASE THIS IS CAUSING THE ISSUES -> confirmed this was causing the issues, just run as root
 # Run and own only the runtime files as a non-root user for security
-RUN groupadd --system --gid 1000 rails && \
-    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R 1000:1000 db log storage tmp
-USER 1000:1000
+# RUN groupadd --system --gid 1000 rails && \
+#     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
+#     chown -R 1000:1000 db log storage tmp
+# USER 1000:1000
 
 # Deployment options
 ENV RAILS_LOG_TO_STDOUT="1" \
