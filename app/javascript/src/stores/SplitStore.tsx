@@ -65,10 +65,10 @@ export class Split {
   description: string = "";
   items: Array<Item> = [{ name: "", splitters: new Set() }];
   splitters: Set<string> = new Set();
-  total: number = 0;
   store: SplitStore;
   readOnly: boolean = true;
   dirty: boolean = false;
+  rawTotal: string = "";
 
   saveHandler: IReactionDisposer;
 
@@ -119,7 +119,7 @@ export class Split {
   ) => {
     this.id = id ?? "";
     this.venmo = venmo ?? "";
-    this.total = total ?? 0;
+    this.rawTotal = total?.toString() ?? "";
     this.description = description ?? "";
     this.readOnly = read_only ?? true;
 
@@ -258,9 +258,15 @@ export class Split {
     }
   );
 
-  @action setTotal = this.createSetField((total: number) => {
-    this.total = total;
-  });
+  @computed get total() {
+    const parsed = Number(this.rawTotal);
+
+    if (isNaN(parsed)) {
+      return undefined;
+    }
+
+    return parsed;
+  }
 }
 
 export const store = new SplitStore();
