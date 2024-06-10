@@ -55,10 +55,10 @@ export const PersonSelector = ({
 
       <PopoverContent className="p-0">
         <Command>
-          {/* <CommandInput placeholder="Search framework..." /> */}
-          {/* <CommandEmpty>No framework found.</CommandEmpty> */}
           <CommandList>
             <CommandGroup>
+              <CommandEmpty className="py-2">No splitters yet.</CommandEmpty>
+
               {people.map((person, i) => (
                 <CommandItem
                   key={i}
