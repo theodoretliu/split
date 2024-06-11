@@ -57,7 +57,11 @@ const SplitShareView = observer(({ split }: SplitShareViewProps) => {
             <SelectValue placeholder="Select your name" />
           </SelectTrigger>
 
-          <SelectContent>
+          <SelectContent
+            ref={(ref) =>
+              ref?.addEventListener("touchend", (e) => e.preventDefault())
+            }
+          >
             <SelectGroup>
               <SelectLabel>Splitters</SelectLabel>
 
