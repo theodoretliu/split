@@ -18,14 +18,19 @@ export function getUrl({
   amount: string;
   note: string;
 }): string {
-  const urlParams = new URLSearchParams({
+  const urlParams = {
     recipients: recipient,
     amount,
     note,
     audience: "private",
-  });
+  };
 
-  return `https://venmo.com/?${urlParams.toString()}`;
+  let s = [];
+  for (const [key, value] of Object.entries(urlParams)) {
+    s.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
+  }
+
+  return `https://venmo.com/?${s.join("&")}`;
 }
 
 export const Owage: React.FC<OwageProps> = ({
