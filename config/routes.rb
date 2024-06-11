@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "splits#index"
 
+  get "/splits/:id/view", to: "splits#show"
+
   resources :splits
 
   # get "*react", to: "splits#index"

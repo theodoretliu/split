@@ -9,7 +9,7 @@ interface OwageProps {
   description: string;
 }
 
-function getUrl({
+export function getUrl({
   recipient,
   amount,
   note,
@@ -42,7 +42,7 @@ export const Owage: React.FC<OwageProps> = ({
             {name} owes ${amount.toFixed(2)}
           </span>
 
-          <a
+          {/* <a
             target="_blank"
             href={getUrl({
               recipient: venmo,
@@ -52,7 +52,7 @@ export const Owage: React.FC<OwageProps> = ({
             className="text-primary underline-offset-4 hover:underline font-medium whitespace-nowrap shrink-0"
           >
             Pay with Venmo
-          </a>
+          </a> */}
         </div>
       </TableCell>
     </TableRow>
