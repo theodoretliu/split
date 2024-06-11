@@ -40,6 +40,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 import { Code } from "./components/ui/typography";
+import QRCode from "react-qr-code";
 
 interface ListOwagesProps {
   sortedSplitters: string[];
@@ -102,7 +103,7 @@ const ListOwages = ({
           <CardDescription>Copy and send them the link below!</CardDescription>
         </CardHeader>
 
-        <CardContent className="p-4 pt-0">
+        <CardContent className="p-4 pt-0 flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2 w-full">
             <Code className="hyphens-auto grow basis-0 min-w-0">
               <a
@@ -130,10 +131,14 @@ const ListOwages = ({
             </button>
           </div>
 
-          {/* <CardDescriptio>
-            In person? Have them scan the QR code with their phone's camera
-          </CardDescriptio> */}
-          {/* <QRCo */}
+          <CardDescription>
+            In person? Get fancy with it. Have them scan the QR code with their
+            phone's camera
+          </CardDescription>
+
+          <div>
+            <QRCode value={viewUrl} />
+          </div>
         </CardContent>
       </Card>
     </>
