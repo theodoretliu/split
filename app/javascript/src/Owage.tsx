@@ -9,7 +9,7 @@ interface OwageProps {
   description: string;
 }
 
-function getUrl({
+export function getUrl({
   recipient,
   amount,
   note,
@@ -18,14 +18,19 @@ function getUrl({
   amount: string;
   note: string;
 }): string {
-  const urlParams = new URLSearchParams({
+  const urlParams = {
     recipients: recipient,
     amount,
     note,
     audience: "private",
-  });
+  };
 
-  return `https://venmo.com/?${urlParams.toString()}`;
+  let s = [];
+  for (const [key, value] of Object.entries(urlParams)) {
+    s.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
+  }
+
+  return `https://venmo.com/?${s.join("&")}`;
 }
 
 export const Owage: React.FC<OwageProps> = ({
@@ -42,7 +47,7 @@ export const Owage: React.FC<OwageProps> = ({
             {name} owes ${amount.toFixed(2)}
           </span>
 
-          <a
+          {/* <a
             target="_blank"
             href={getUrl({
               recipient: venmo,
@@ -52,7 +57,7 @@ export const Owage: React.FC<OwageProps> = ({
             className="text-primary underline-offset-4 hover:underline font-medium whitespace-nowrap shrink-0"
           >
             Pay with Venmo
-          </a>
+          </a> */}
         </div>
       </TableCell>
     </TableRow>

@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { PersonSelector } from "~/components/PersonSelector";
-import { Check, LoaderCircle, Plus, X } from "lucide-react";
+import { Check, LoaderCircle, Plus, X, Clipboard } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -32,6 +32,15 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { cn } from "~/utilities";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
+import { Code } from "./components/ui/typography";
+import QRCode from "react-qr-code";
 
 interface ListOwagesProps {
   sortedSplitters: string[];
@@ -47,26 +56,92 @@ const ListOwages = ({
   venmo,
   description,
 }: ListOwagesProps) => {
-  if (sortedSplitters.length === 0) {
+  const { id } = useParams();
+
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (copied) {
+      const timeoutId = setTimeout(() => setCopied(false), 1000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [copied]);
+
+  if (sortedSplitters.length === 0 || id === undefined) {
     return null;
   }
 
+  const viewUrl = `${window.location.origin}/splits/${id}/view`;
+
   return (
-    <div className="w-full rounded-md border">
-      <Table className="table-fixed">
-        <TableBody>
-          {sortedSplitters.map((splitter) => (
-            <Owage
-              key={splitter}
-              name={splitter}
-              amount={owage.owage[splitter]}
-              venmo={venmo}
-              description={description}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <>
+      <div className="w-full rounded-md border">
+        <Table className="table-fixed">
+          <TableBody>
+            {sortedSplitters.map((splitter) => (
+              <Owage
+                key={splitter}
+                name={splitter}
+                amount={owage.owage[splitter]}
+                venmo={venmo}
+                description={description}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Card>
+        <CardHeader className="p-4">
+          <CardTitle className="text-lg">
+            Share this with your friends
+          </CardTitle>
+
+          <CardDescription>Copy and send them the link below!</CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-4 pt-0 flex flex-col gap-2">
+          <div className="flex flex-row items-center gap-2 w-full">
+            <Code className="hyphens-auto grow basis-0 min-w-0">
+              <a
+                href={viewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4"
+              >
+                {viewUrl}
+              </a>
+            </Code>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(viewUrl);
+                setCopied(true);
+              }}
+              className="rounded-md border p-1 flex items-center justify-center shrink-0"
+            >
+              {!copied ? (
+                <Clipboard className="h-4 w-4" />
+              ) : (
+                <Check className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+
+          <CardDescription>
+            In person? Get fancy with it. Have them scan the QR code with their
+            phone's camera
+          </CardDescription>
+
+          <div>
+            <QRCode value={viewUrl} />
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
