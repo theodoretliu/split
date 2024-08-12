@@ -23,6 +23,7 @@ export function getUrl({
     amount,
     note,
     audience: "private",
+    txn: "pay",
   };
 
   let s = [];
@@ -30,7 +31,7 @@ export function getUrl({
     s.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
   }
 
-  return `https://venmo.com/?${s.join("&")}`;
+  return `https://account.venmo.com/?${s.join("&")}`;
 }
 
 export const Owage: React.FC<OwageProps> = ({
